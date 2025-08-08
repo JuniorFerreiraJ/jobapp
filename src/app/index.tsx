@@ -1,5 +1,6 @@
-import { ActivityIndicator, StatusBar, View } from "react-native";
-import colors from "../constants/colors";
+import { ActivityIndicator, StatusBar, Text, View } from "react-native";
+import colors from '../constants/colors'
+
 export default function Index() {
   return (
     <View
