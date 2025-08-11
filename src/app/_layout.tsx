@@ -1,23 +1,26 @@
 import { Stack, router } from "expo-router";
 import { useEffect } from 'react';
+import { useAuth } from '../hooks/useAuth';
 
 export default function RootLayout() {
+  const { user, loading } = useAuth();
+  
   useEffect(() => {
-    const checkAuth = async () => {
-      const signed = false;
-
-      if (!signed) {
+    if (!loading) {
+      if (user) {
+        console.log("Usuário logado:", user.email);
+        router.replace('/(panel)/home/page');
+      } else {
+        console.log("Usuário não logado");
         router.replace('/(auth)/signin/page');
-        return;
       }
+    }
+  }, [user, loading]);
 
-      router.replace('/(panel)/home/page');
-    };
-
-    // Delay para garantir que o componente esteja montado
-    const timer = setTimeout(checkAuth, 100);
-    return () => clearTimeout(timer);
-  }, []);
+  // Mostrar loading enquanto verifica autenticação
+  if (loading) {
+    return null; // Ou um componente de loading
+  }
 
   return (
     <Stack>
