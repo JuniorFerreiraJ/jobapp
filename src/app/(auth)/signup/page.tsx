@@ -4,7 +4,7 @@
  - Chama a screen passando os dados necessarios para montar componente visual
 */
 
-import { SignUpScreen } from "@/src/screens/signup";
+import SignUpScreen from "../../../screens/signup/index";
 
 export default function SignUp() {
   return (

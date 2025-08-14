@@ -2,30 +2,20 @@
   Screen > Responsável por renderizar a parte visual.
 */
 
-import { Link, router } from "expo-router";
-import {
-  Image,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  Alert
-} from "react-native";
-import { useState } from "react";
-import colors from "../../constants/colors";
-import { supabase } from "../../config/supabase";
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, StatusBar, Alert, Image } from 'react-native';
+import { Link, router } from 'expo-router';
+import { supabase } from '../../config/supabase';
+import colors from '../../constants/colors';
 
-export function SigninScreen() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+export default function SignInScreen() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSignIn = async () => {
     if (!email || !password) {
-      Alert.alert("Erro", "Por favor, preencha todos os campos");
+      Alert.alert('Erro', 'Por favor, preencha todos os campos');
       return;
     }
 
@@ -90,7 +80,7 @@ export function SigninScreen() {
           />
         </View>
 
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[styles.button, loading && styles.buttonDisabled]}
           onPress={handleSignIn}
           disabled={loading}
@@ -125,28 +115,44 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderWidth: 1,
     borderColor: colors.gray100,
-    borderRadius: 4,
-    marginBottom: 12,
-    padding: 12,
+    borderRadius: 12,
+    marginBottom: 16,
+    padding: 16,
+    fontSize: 16,
+    shadowColor: colors.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   button: {
-    backgroundColor: colors.orange,
-    borderRadius: 4,
-    padding: 12,
+    backgroundColor: colors.yellow,
+    borderRadius: 12,
+    padding: 16,
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: 8,
+    shadowColor: colors.yellow,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
   buttonDisabled: {
     opacity: 0.7,
   },
   buttonText: {
-    color: colors.white,
-    fontSize: 16,
-    fontWeight: 'bold'
+    color: colors.black,
+    fontSize: 18,
+    fontWeight: '700',
+    letterSpacing: 0.5,
   },
   link: {
-    color: colors.white,
-    marginTop: 16,
-    textAlign: 'center'
+    color: colors.yellow,
+    marginTop: 24,
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: '600',
+    textDecorationLine: 'underline',
   }
 })

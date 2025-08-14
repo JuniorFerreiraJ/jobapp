@@ -1,34 +1,24 @@
 
-import colors from "@/src/constants/colors";
-import {
-  ScrollView,
-  Text,
-  View,
-  StatusBar,
-  StyleSheet,
-  Image,
-  TextInput,
-  TouchableOpacity,
-  Alert
-} from "react-native";
-import { Link } from "expo-router";
-import { useState } from "react";
-import { supabase } from "../../config/supabase";
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, StatusBar, Alert, Image } from 'react-native';
+import { Link, router } from 'expo-router';
+import { supabase } from '../../config/supabase';
+import colors from '../../constants/colors';
 
-export function SignUpScreen() {
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+export default function SignUpScreen() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSignUp = async () => {
-    if (!fullName || !email || !password) {
-      Alert.alert("Erro", "Por favor, preencha todos os campos");
+    if (!email || !password || !confirmPassword) {
+      Alert.alert('Erro', 'Por favor, preencha todos os campos');
       return;
     }
 
-    if (password.length < 6) {
-      Alert.alert("Erro", "A senha deve ter pelo menos 6 caracteres");
+    if (password !== confirmPassword) {
+      Alert.alert('Erro', 'As senhas não coincidem');
       return;
     }
 
@@ -37,26 +27,19 @@ export function SignUpScreen() {
       const { error } = await supabase.auth.signUp({
         email,
         password,
-        options: {
-          data: {
-            full_name: fullName,
-          },
-        },
       });
 
       if (error) {
         Alert.alert("Erro no cadastro", error.message);
       } else {
+        console.log("Conta criada com sucesso");
         Alert.alert(
-          "Sucesso!", 
+          "Sucesso!",
           "Conta criada com sucesso! Verifique seu email para confirmar a conta.",
           [
             {
               text: "OK",
-              onPress: () => {
-                // Voltar para a tela de login
-                // O usuário precisará confirmar o email antes de fazer login
-              }
+              onPress: () => router.replace('/(auth)/signin/page')
             }
           ]
         );
@@ -71,7 +54,6 @@ export function SignUpScreen() {
 
   return (
     <ScrollView
-      style={{ backgroundColor: colors.zinc }}
       contentContainerStyle={{ flexGrow: 1, }}
       showsVerticalScrollIndicator={false}
     >
@@ -86,21 +68,9 @@ export function SignUpScreen() {
         <View>
           <TextInput
             style={styles.input}
-            placeholder="Nome completo..."
-            autoCapitalize="words"
-            placeholderTextColor={colors.gray50}
-            value={fullName}
-            onChangeText={setFullName}
-            autoComplete="name"
-          />
-        </View>
-
-        <View>
-          <TextInput
-            style={styles.input}
             placeholder="Digite seu email..."
             autoCapitalize="none"
-            placeholderTextColor={colors.gray50}
+            placeholderTextColor={colors.gray100}
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
@@ -114,10 +84,23 @@ export function SignUpScreen() {
             placeholder="********"
             autoCapitalize="none"
             secureTextEntry={true}
-            placeholderTextColor={colors.gray50}
+            placeholderTextColor={colors.gray100}
             value={password}
             onChangeText={setPassword}
-            autoComplete="password-new"
+            autoComplete="new-password"
+          />
+        </View>
+
+        <View>
+          <TextInput
+            style={styles.input}
+            placeholder="Confirme sua senha"
+            autoCapitalize="none"
+            secureTextEntry={true}
+            placeholderTextColor={colors.gray100}
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            autoComplete="new-password"
           />
         </View>
 
@@ -131,16 +114,12 @@ export function SignUpScreen() {
           </Text>
         </TouchableOpacity>
 
-        <Link
-          href="/(auth)/signin/page"
-          style={styles.link}
-        >
-          Já possui uma conta? Faça o login!
+        <Link href="/(auth)/signin/page" style={styles.link}>
+          Já possui uma conta? Faça login
         </Link>
-
       </View>
     </ScrollView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -160,28 +139,44 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderWidth: 1,
     borderColor: colors.gray100,
-    borderRadius: 4,
-    padding: 12,
-    marginBottom: 12,
+    borderRadius: 12,
+    marginBottom: 16,
+    padding: 16,
+    fontSize: 16,
+    shadowColor: colors.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   button: {
-    backgroundColor: colors.orange,
-    borderRadius: 4,
-    padding: 12,
+    backgroundColor: colors.yellow,
+    borderRadius: 12,
+    padding: 16,
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: 8,
+    shadowColor: colors.yellow,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
   buttonDisabled: {
     opacity: 0.7,
   },
   buttonText: {
-    color: colors.white,
-    fontSize: 16,
-    fontWeight: 'bold'
+    color: colors.black,
+    fontSize: 18,
+    fontWeight: '700',
+    letterSpacing: 0.5,
   },
   link: {
-    color: colors.white,
-    marginTop: 16,
-    textAlign: 'center'
+    color: colors.yellow,
+    marginTop: 24,
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: '600',
+    textDecorationLine: 'underline',
   }
 })

@@ -1,14 +1,17 @@
 
 export default {
-  zinc: "#101010",
-  black: '#000',
-  white: '#FFF',
+  zinc: "#000000", // Preto principal
+  black: '#000000',
+  white: '#FFFFFF',
   green: '#38b74f',
-  gray: 'gray',
-  gray50: '#888',
-  gray100: '#C4C4C4',
-  gray200: '#1a1a1a',
-  blue: '#2196f3',
+  gray: '#666666',
+  gray50: '#888888',
+  gray100: '#CCCCCC',
+  gray200: '#333333',
+  blue: '#FFD700', // Amarelo dourado
   red: '#f8302e',
-  orange: '#FE6726'
+  orange: '#FFD700', // Amarelo dourado
+  yellow: '#FFD700', // Amarelo principal
+  yellowLight: '#FFED4E', // Amarelo mais claro
+  yellowDark: '#FFC000' // Amarelo mais escuro
 }
