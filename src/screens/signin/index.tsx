@@ -1,59 +1,42 @@
 /*
-  Screen > Responsável por renderizar a parte visual.
+  Scereen > Responsavel por renderizar a parte visual.
 */
 
-import { Link, router } from "expo-router";
+import colors from "@/src/constants/colors";
 import {
-  Image,
   ScrollView,
+  Text,
+  View,
   StatusBar,
   StyleSheet,
-  Text,
+  Image,
   TextInput,
-  TouchableOpacity,
-  View,
-  Alert
+  TouchableOpacity
 } from "react-native";
-import { useState } from "react";
-import colors from "../../constants/colors";
-import { supabase } from "../../config/supabase";
+import { Link } from "expo-router";
+import { Control, FieldErrors, UseFormHandleSubmit, Controller } from "react-hook-form";
+import { SignInFormData } from "@/src/hooks/useSignin";
 
-export function SigninScreen() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+interface SignInScreenProps {
+  control: Control<SignInFormData>;
+  handleSubmit: UseFormHandleSubmit<SignInFormData>;
+  onSubmit: (data: SignInFormData) => Promise<void>;
+  isSubmitting: boolean;
+  errors: FieldErrors<SignInFormData>;
+}
 
-  const handleSignIn = async () => {
-    if (!email || !password) {
-      Alert.alert("Erro", "Por favor, preencha todos os campos");
-      return;
-    }
 
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        Alert.alert("Erro no login", error.message);
-      } else {
-        console.log("Login realizado com sucesso");
-        // O onAuthStateChange no layout principal irá redirecionar automaticamente
-      }
-    } catch (error) {
-      Alert.alert("Erro", "Ocorreu um erro inesperado");
-      console.error("Erro no login:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+export function SignInScreen({
+  control,
+  handleSubmit,
+  onSubmit,
+  isSubmitting,
+  errors,
+}: SignInScreenProps) {
   return (
     <ScrollView
       style={{ backgroundColor: colors.zinc }}
-      contentContainerStyle={{ flexGrow: 1 }}
+      contentContainerStyle={{ flexGrow: 1, }}
       showsVerticalScrollIndicator={false}
     >
       <View style={styles.container}>
@@ -64,48 +47,74 @@ export function SigninScreen() {
           style={styles.logo}
         />
 
-        <View>
-          <TextInput
-            style={styles.input}
-            placeholder="Digite seu email..."
-            autoCapitalize="none"
-            placeholderTextColor={colors.gray100}
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoComplete="email"
-          />
-        </View>
 
-        <View>
-          <TextInput
-            style={styles.input}
-            placeholder="********"
-            autoCapitalize="none"
-            secureTextEntry={true}
-            placeholderTextColor={colors.gray100}
-            value={password}
-            onChangeText={setPassword}
-            autoComplete="password"
-          />
-        </View>
+        <Controller
+          control={control}
+          name="email"
+          defaultValue=""
+          render={({ field: { onChange, onBlur, value } }) => (
+            <View>
+              <TextInput
+                style={styles.input}
+                placeholder="Digite seu email..."
+                autoCapitalize="none"
+                placeholderTextColor={colors.gray50}
+                value={value}
+                onBlur={onBlur}
+                onChangeText={onChange}
+              />
+              {errors.email && <Text style={styles.errorText}>
+                {errors.email?.message}
+              </Text>}
+            </View>
+          )}
+        />
 
-        <TouchableOpacity 
-          style={[styles.button, loading && styles.buttonDisabled]}
-          onPress={handleSignIn}
-          disabled={loading}
+        <Controller
+          control={control}
+          name="password"
+          defaultValue=""
+          render={({ field: { onChange, onBlur, value } }) => (
+            <View>
+              <TextInput
+                style={styles.input}
+                placeholder="Digite sua senha..."
+                autoCapitalize="none"
+                placeholderTextColor={colors.gray50}
+                value={value}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                secureTextEntry={true}
+              />
+              {errors.password && <Text style={styles.errorText}>
+                {errors.password?.message}
+              </Text>}
+            </View>
+          )}
+        />
+
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleSubmit(onSubmit)}
         >
           <Text style={styles.buttonText}>
-            {loading ? "Entrando..." : "Acessar conta"}
+            {isSubmitting ? "Carregando..." : "Acessar conta"}
           </Text>
         </TouchableOpacity>
 
-        <Link href="/(auth)/signup/page" style={styles.link}>
+        <Link
+          href="/(auth)/signup/page"
+          style={styles.link}
+        >
           Ainda não possui uma conta? Cadastre-se
         </Link>
+
+
+
       </View>
     </ScrollView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -136,9 +145,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  buttonDisabled: {
-    opacity: 0.7,
-  },
   buttonText: {
     color: colors.white,
     fontSize: 16,
@@ -148,5 +154,9 @@ const styles = StyleSheet.create({
     color: colors.white,
     marginTop: 16,
     textAlign: 'center'
+  },
+  errorText: {
+    color: colors.red,
+    marginBottom: 8,
   }
 })

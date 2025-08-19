@@ -4,7 +4,6 @@
     "slug": "job",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./src/assets/logo.png",
     "scheme": "job",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -12,10 +11,6 @@
       "supportsTablet": true
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./src/assets/logo.png",
-        "backgroundColor": "#ffffff"
-      },
       "edgeToEdgeEnabled": true,
       "package": "com.betel_ti.job"
     },

@@ -1,4 +1,0 @@
-
-export const supaUrl = 'https://svnfjddqnkjhklmbwuli.supabase.co';
-
-export const supaAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN2bmZqZGRxbmtqaGtsbWJ3dWxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ2NzM0NTQsImV4cCI6MjA3MDI0OTQ1NH0.e6Seda7EqS6rRfdPWEIg9v0O3Lbdhd8nrEbYrW9PNuk';

@@ -7,6 +7,21 @@ export default function PanelLayout() {
         name="home/page"
         options={{ headerShown: false }}
       />
+
+      <Stack.Screen
+        name="profile/page"
+        options={{ headerShown: false }}
+      />
+
+      <Stack.Screen
+        name="travel/new/page"
+        options={{ headerShown: false }}
+      />
+
+      <Stack.Screen
+        name="detail/[id]"
+        options={{ headerShown: false }}
+      />
     </Stack>
   )
 }

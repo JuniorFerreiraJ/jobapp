@@ -8,67 +8,29 @@ import {
   StyleSheet,
   Image,
   TextInput,
-  TouchableOpacity,
-  Alert
+  TouchableOpacity
 } from "react-native";
 import { Link } from "expo-router";
-import { useState } from "react";
-import { supabase } from "../../config/supabase";
+import { Control, FieldErrors, UseFormHandleSubmit } from "react-hook-form";
+import { SignUpFormData } from "@/src/hooks/useSignup";
+import { Controller } from 'react-hook-form'
 
-export function SignUpScreen() {
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  const handleSignUp = async () => {
-    if (!fullName || !email || !password) {
-      Alert.alert("Erro", "Por favor, preencha todos os campos");
-      return;
-    }
+interface SignUpScreenProps {
+  control: Control<SignUpFormData>;
+  handleSubmit: UseFormHandleSubmit<SignUpFormData>;
+  onSubmit: (data: SignUpFormData) => Promise<void>;
+  isSubmitting: boolean;
+  errors: FieldErrors<SignUpFormData>;
+}
 
-    if (password.length < 6) {
-      Alert.alert("Erro", "A senha deve ter pelo menos 6 caracteres");
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: fullName,
-          },
-        },
-      });
-
-      if (error) {
-        Alert.alert("Erro no cadastro", error.message);
-      } else {
-        Alert.alert(
-          "Sucesso!", 
-          "Conta criada com sucesso! Verifique seu email para confirmar a conta.",
-          [
-            {
-              text: "OK",
-              onPress: () => {
-                // Voltar para a tela de login
-                // O usuário precisará confirmar o email antes de fazer login
-              }
-            }
-          ]
-        );
-      }
-    } catch (error) {
-      Alert.alert("Erro", "Ocorreu um erro inesperado");
-      console.error("Erro no cadastro:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+export function SignUpScreen({
+  control,
+  handleSubmit,
+  onSubmit,
+  isSubmitting,
+  errors,
+}: SignUpScreenProps) {
   return (
     <ScrollView
       style={{ backgroundColor: colors.zinc }}
@@ -83,51 +45,107 @@ export function SignUpScreen() {
           style={styles.logo}
         />
 
-        <View>
-          <TextInput
-            style={styles.input}
-            placeholder="Nome completo..."
-            autoCapitalize="words"
-            placeholderTextColor={colors.gray50}
-            value={fullName}
-            onChangeText={setFullName}
-            autoComplete="name"
-          />
-        </View>
 
-        <View>
-          <TextInput
-            style={styles.input}
-            placeholder="Digite seu email..."
-            autoCapitalize="none"
-            placeholderTextColor={colors.gray50}
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoComplete="email"
-          />
-        </View>
 
-        <View>
-          <TextInput
-            style={styles.input}
-            placeholder="********"
-            autoCapitalize="none"
-            secureTextEntry={true}
-            placeholderTextColor={colors.gray50}
-            value={password}
-            onChangeText={setPassword}
-            autoComplete="password-new"
-          />
-        </View>
+        <Controller
+          control={control}
+          name="username"
+          defaultValue=""
+          render={({ field: { onChange, onBlur, value } }) => (
+            <View>
+              <TextInput
+                style={styles.input}
+                placeholder="Nome completo..."
+                autoCapitalize="none"
+                placeholderTextColor={colors.gray50}
+                value={value}
+                onBlur={onBlur}
+                onChangeText={onChange}
+              />
+              {errors.username && <Text style={styles.errorText}>
+                {errors.username?.message}
+              </Text>}
+            </View>
+          )}
+        />
+
+        <Controller
+          control={control}
+          name="email"
+          defaultValue=""
+          render={({ field: { onChange, onBlur, value } }) => (
+            <View>
+              <TextInput
+                style={styles.input}
+                placeholder="Digite seu email..."
+                autoCapitalize="none"
+                placeholderTextColor={colors.gray50}
+                value={value}
+                onBlur={onBlur}
+                onChangeText={onChange}
+              />
+              {errors.email && <Text style={styles.errorText}>
+                {errors.email?.message}
+              </Text>}
+            </View>
+          )}
+        />
+
+
+        <Controller
+          control={control}
+          name="password"
+          defaultValue=""
+          render={({ field: { onChange, onBlur, value } }) => (
+            <View>
+              <TextInput
+                style={styles.input}
+                placeholder="Digite sua senha..."
+                autoCapitalize="none"
+                secureTextEntry={true}
+                placeholderTextColor={colors.gray50}
+                value={value}
+                onBlur={onBlur}
+                onChangeText={onChange}
+              />
+              {errors.password && <Text style={styles.errorText}>
+                {errors.password?.message}
+              </Text>}
+            </View>
+          )}
+        />
+
+
+        <Controller
+          control={control}
+          name="confirmPassword"
+          defaultValue=""
+          render={({ field: { onChange, onBlur, value } }) => (
+            <View>
+              <TextInput
+                style={styles.input}
+                placeholder="Digite novamente a sua senha..."
+                autoCapitalize="none"
+                secureTextEntry={true}
+                placeholderTextColor={colors.gray50}
+                value={value}
+                onBlur={onBlur}
+                onChangeText={onChange}
+              />
+              {errors.confirmPassword && <Text style={styles.errorText}>
+                {errors.confirmPassword?.message}
+              </Text>}
+            </View>
+          )}
+        />
+
 
         <TouchableOpacity
-          style={[styles.button, loading && styles.buttonDisabled]}
-          onPress={handleSignUp}
-          disabled={loading}
+          style={styles.button}
+          onPress={handleSubmit(onSubmit)}
         >
           <Text style={styles.buttonText}>
-            {loading ? "Criando conta..." : "Criar conta"}
+            {isSubmitting ? "Carregando..." : "Criar conta"}
           </Text>
         </TouchableOpacity>
 
@@ -137,6 +155,8 @@ export function SignUpScreen() {
         >
           Já possui uma conta? Faça o login!
         </Link>
+
+
 
       </View>
     </ScrollView>
@@ -161,8 +181,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.gray100,
     borderRadius: 4,
-    padding: 12,
     marginBottom: 12,
+    padding: 12,
   },
   button: {
     backgroundColor: colors.orange,
@@ -170,9 +190,6 @@ const styles = StyleSheet.create({
     padding: 12,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  buttonDisabled: {
-    opacity: 0.7,
   },
   buttonText: {
     color: colors.white,
@@ -183,5 +200,9 @@ const styles = StyleSheet.create({
     color: colors.white,
     marginTop: 16,
     textAlign: 'center'
+  },
+  errorText: {
+    color: colors.red,
+    marginBottom: 8,
   }
 })
